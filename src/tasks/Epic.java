@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class Epic extends Task {
 
     private ArrayList<SubTask> subTasks;
-    private StatusOfTask epicStatus;
+    //private StatusOfTask epicStatus;
 
      public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, StatusOfTask.NEW);
         subTasks = new ArrayList<>();
     }
 
@@ -17,16 +17,21 @@ public class Epic extends Task {
 
     }
 
+    public void deleteSubTask (SubTask subTask) {
+        subTasks.remove(subTask);
+    }
+
     public ArrayList<SubTask> getSubTasks() {
-        return subTasks;
+        ArrayList<SubTask> subTasksForReturn = new ArrayList<>();
+        subTasksForReturn = subTasks;
+        return subTasksForReturn;
     }
 
     public void removeSubTasks() {
         this.subTasks.clear();
     }
 
-    @Override
-    public StatusOfTask getStatus() {
+    public void updateEpicStatus () {
         int newStatusCounter = 0;
         int doneStatusCounter = 0;
         if (subTasks != null) {
@@ -39,15 +44,14 @@ public class Epic extends Task {
                 }
             }
             if (subTasks.isEmpty() || newStatusCounter == subTasks.size()) {
-                epicStatus = StatusOfTask.NEW;
+                status = StatusOfTask.NEW;
             } else if (doneStatusCounter == subTasks.size()) {
-                epicStatus = StatusOfTask.DONE;
+                status = StatusOfTask.DONE;
             } else {
-                epicStatus = StatusOfTask.IN_PROGRESS;
+                status = StatusOfTask.IN_PROGRESS;
             }
         } else {
-            epicStatus = StatusOfTask.NEW;
+            status = StatusOfTask.NEW;
         }
-        return epicStatus;
     }
 }

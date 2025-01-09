@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    private static int id = 0;
-    private Task task;
-    private SubTask subTask;
-    private Epic epic;
+    private int idCounter = 1;
+    private int id;
     private HashMap<Integer, Task> tasksMap;
     private HashMap<Integer, SubTask> subTasksMap;
     private HashMap<Integer, Epic> epicMap;
@@ -20,41 +18,66 @@ public class TaskManager {
         subTasksMap = new HashMap<>();
     }
 
-    public void setTask (Task task) {
-        this.task = task;
-        id++;
+    public int setTask (Task task) {
+        id = setId();
+        task.setId(id);
         tasksMap.put(id, task);
+        if (task.getId() == id) {
+            return id;
+        } else {
+            return -1; // Если вернется -1, то ошибка добавления Задачи.
+        }
     }
 
-    public void setEpic (Epic epic) {
-        this.epic = epic;
-        id++;
+    public int setEpic (Epic epic) {
+        id = setId();
+        epic.setId(id);
         epicMap.put(id, epic);
-    }
-
-    public void setSubTask (SubTask subTask) {
-        this.subTask = subTask;
-        id++;
-        subTasksMap.put(id, subTask);
-    }
-
-    public void getAllTasks () {
-        for (Integer id : tasksMap.keySet()) {
-            System.out.println("Задача - {id" + id + "}- " + tasksMap.get(id));
+        if (epic.getId() == id) {
+            return id;
+        } else {
+            return -1; // Если вернется -1, то ошибка добавления Эпика.
         }
     }
 
-    public void getAllSubTasks () {
-        for (Integer id : subTasksMap.keySet()) {
-            System.out.println("Подзадача - {id" + id + "}- " + subTasksMap.get(id));
+    public int setSubTask (SubTask subTask) {
+        if (epicMap.containsKey(subTask.getEpicId())) {
+            id = setId();
+            subTask.setId(id);
+            subTasksMap.put(id, subTask);
+            Epic epic;
+            epic = epicMap.get(subTask.getEpicId());
+            epic.setSubTask(subTask);
+            epic.updateEpicStatus();
+            if (subTask.getId() == id) {
+                return id;
+            } else {
+                return -1; // Если вернется -1, то ошибка добавления ПодЗадачи.
+            }
+        } else {
+            return -1; // Если вернется -1, то ошибка добавления ПодЗадачи.
         }
     }
 
-    public void getAllEpics () {
-        for (Integer key : epicMap.keySet()) {
-            epicMap.get(key).setStatus(epicMap.get(key).getStatus());
-            System.out.println("Эпик - {id" + key + "}- " + epicMap.get(key));
+    public ArrayList<Task> getAllTasks () {
+        ArrayList<Task> tasks = new ArrayList<>();
+        tasks.addAll(tasksMap.values());
+        return tasks;
+    }
+
+    public ArrayList<SubTask> getAllSubTasks () {
+        ArrayList<SubTask> subTasks = new ArrayList<>();
+        subTasks.addAll(subTasksMap.values());
+        return subTasks;
+    }
+
+    public ArrayList<Epic> getAllEpics () {
+        for (Integer key: epicMap.keySet()) {
+            epicMap.get(key).updateEpicStatus();
         }
+        ArrayList<Epic> epics = new ArrayList<>();
+        epics.addAll(epicMap.values());
+        return epics;
     }
 
     public void removeAllTasks () {
@@ -63,6 +86,10 @@ public class TaskManager {
 
     public void removeAllSubTasks () {
         this.subTasksMap.clear();
+        for (Epic epic : epicMap.values()) {
+            epic.removeSubTasks();
+            epic.updateEpicStatus();
+        }
     }
 
     public void removeAllEpics () {
@@ -71,58 +98,51 @@ public class TaskManager {
     }
 
     public Task getTask(int id) {
-        Task task = null;
-        for (Integer key : tasksMap.keySet()) {
-            if (key == id) {
-                task = tasksMap.get(id);
-            }
-        }
-        if (task == null) {
-            System.out.println("Задача с id" + id + " не найдена");
-            return task;
-        }
-        return task;
+       return tasksMap.get(id);
     }
 
     public SubTask getSubTask(int id) {
-        SubTask subTask = null;
-        for (Integer key : subTasksMap.keySet()) {
-            if (key == id) {
-                subTask = subTasksMap.get(id);
-            }
-        }
-        if (subTask == null) {
-            System.out.println("Подзадача с id" + id + " не найдена");
-            return subTask;
-        }
-        return subTask;
+        return subTasksMap.get(id);
     }
 
     public Epic getEpic(int id) {
-        Epic epic = null;
-        for (Integer key : epicMap.keySet()) {
-            epicMap.get(key).setStatus(epicMap.get(key).getStatus());
-            if (key == id) {
-                epic = epicMap.get(id);
+        epicMap.get(id).updateEpicStatus();
+        return epicMap.get(id);
+    }
+
+    public void updateTask (Task task) {
+        int checkId = task.getId();
+        for (Integer id : tasksMap.keySet()) {
+            if (checkId == id) {
+                tasksMap.put(id, task);
             }
         }
-        if (epic == null) {
-            System.out.println("Эпик с id" + id + " не найден");
-            return epic;
+    }
+
+    public void updateSubTask (SubTask subTask) {
+        int checkId = subTask.getId();
+        for (Integer id : subTasksMap.keySet()) {
+            if (checkId == id) {
+                int epicId = subTasksMap.get(id).getEpicId();
+                if (subTask.getEpicId() == epicId) {
+                    SubTask subTaskOld = subTasksMap.get(id);
+                    epicMap.get(epicId).deleteSubTask(subTaskOld);
+                    epicMap.get(epicId).setSubTask(subTask);
+                    subTasksMap.put(id, subTask);
+                    epicMap.get(epicId).updateEpicStatus();
+                }
+            }
         }
-        return epic;
     }
 
-    public void updateTask (Task task, Integer id) {
-        tasksMap.put(id, task);
-    }
+    public void updateEpic (Epic epic) {
 
-    public void updateSubTask (SubTask subTask, Integer id) {
-        subTasksMap.put(id, subTask);
-    }
-
-    public void updateEpic (Epic epic, Integer id) {
-        epicMap.put(id, epic);
+        for (Integer id : epicMap.keySet()) {
+            if (epic.getId() == id) {
+                epicMap.get(id).setName(epic.getName());
+                epicMap.get(id).setDescription(epic.getDescription());
+            }
+        }
     }
 
     public void deleteTaskById (Integer id) {
@@ -130,58 +150,25 @@ public class TaskManager {
     }
 
     public void deleteSubTaskById (Integer id) {
+        epicMap.get(subTasksMap.get(id).getEpicId()).deleteSubTask(subTasksMap.get(id));
+        epicMap.get(subTasksMap.get(id).getEpicId()).updateEpicStatus();
         subTasksMap.remove(id);
     }
 
     public void deleteEpicById (Integer id) {
-        epicMap.get(id).removeSubTasks();
-        int epicId = 0;
-        ArrayList<Integer> idForDelete = new ArrayList<>();
-
-        for (Integer key : subTasksMap.keySet()) {
-            epicId = subTasksMap.get(key).getEpicId();
-                if (id == epicId) {
-                    idForDelete.add(key);
-                }
-        }
-        for (Integer key : idForDelete) {
-            deleteSubTaskById(key);
-        }
-        epicMap.remove(id);
-    }
-
-    public HashMap<Integer, Task> getTaskAsMap () { // Метод добавлен по требованиям ТЗ для того, чтобы через
-        //sout() вывести список задач. Изначально для целей печати я сделал void метод getAllTasks () (соответствующее
-        // название для подзадачи и эпика), который сразу печатает как мне нужно.
-
-        return tasksMap;
-    }
-
-    public HashMap<Integer, SubTask> getSubTaskAsMap () { // Метод добавлен по требованиям ТЗ для того, чтобы через
-        //sout() вывести список задач. Изначально для целей печати я сделал void метод getAllTasks () (соответствующее
-        // название для подзадачи и эпика), который сразу печатает как мне нужно.
-
-        return subTasksMap;
-    }
-
-    public HashMap<Integer, Epic> getEpicAsMap () { // Метод добавлен по требованиям ТЗ для того, чтобы через
-        //sout() вывести список задач. Изначально для целей печати я сделал void метод getAllTasks () (соответствующее
-        // название для подзадачи и эпика), который сразу печатает как мне нужно.
-        for (Integer key : epicMap.keySet()) {
-            epicMap.get(key).setStatus(epicMap.get(key).getStatus());
-        }
-        return epicMap;
-    }
-
-    public int getEpicId(Epic epic){
-        int id = 0;
-        for (Integer key : epicMap.keySet()) {
-            for (Epic epicValue : epicMap.values()) {
-                if (epicValue != null && epicValue.equals(epic)) {
-                    id = key;
-                }
+        if (epicMap.containsKey(id)) {
+            for (SubTask subTask : getSubTaskByEpic(id)) {
+                subTasksMap.remove(subTask.getId());
             }
+            epicMap.remove(id);
         }
-        return id;
+    }
+
+    public ArrayList<SubTask> getSubTaskByEpic (int epicId) {
+        return epicMap.get(epicId).getSubTasks();
+    }
+
+    private Integer setId () {
+        return idCounter++;
     }
 }
