@@ -24,65 +24,69 @@ public class Main {
 
         Epic epic2 = new Epic ("epic2", "descr6");
         taskManager.setEpic(epic2);
-        SubTask subTask4 = new SubTask("subtask3", "descr7", StatusOfTask.NEW, epic2.getId());
+        SubTask subTask3 = new SubTask("subtask3", "descr7", StatusOfTask.NEW, epic2.getId());
 
-        taskManager.setSubTask(subTask4);
+        taskManager.setSubTask(subTask3);
 
         //Распечатываем списки
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());
         System.out.println(taskManager.getAllEpics());
 
-
-        System.out.println();
+        System.out.println("---------------Меняем статусы");
         //Меняем статусы
-        task1.setStatus(StatusOfTask.IN_PROGRESS);
-        task2.setStatus(StatusOfTask.DONE);
 
-        subTask1.setStatus(StatusOfTask.IN_PROGRESS);
-        subTask2.setStatus(StatusOfTask.DONE);
+        //task1.setStatus(StatusOfTask.IN_PROGRESS); обращаемся через таск-менеджер.
+        taskManager.getTask(task1.getId()).setStatus(StatusOfTask.IN_PROGRESS);
+        //после смены статуса требуется обновить таск-менеджер
+        taskManager.updateTask(task1);
 
-        subTask4.setStatus(StatusOfTask.DONE);
+        taskManager.getTask(task2.getId()).setStatus(StatusOfTask.DONE);
+        taskManager.updateTask(task2);
 
+        taskManager.getSubTask(subTask1.getId()).setStatus(StatusOfTask.IN_PROGRESS);
+        taskManager.updateSubTask(subTask1);
+
+        taskManager.getSubTask(subTask2.getId()).setStatus(StatusOfTask.DONE);
+        taskManager.updateSubTask(subTask2);
+
+        taskManager.getSubTask(subTask3.getId()).setStatus(StatusOfTask.DONE);
+        taskManager.updateSubTask(subTask3);
         //Проверяем статусы
-        System.out.println("В этот момент статус эпика не меняется, так как методы вызова не работали:");
-        System.out.println(epic1.getStatus());
-        System.out.println(epic2.getStatus());
-        System.out.println(epic1);
-        System.out.println(epic2);
-        System.out.println("Далее статусы должны поменяться:"); //Так и должно быть или нужно переопределять метод
-        //setStatus для класса SubTask? Но как связать объект из TaskManager, если он уровнем выше?
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());
         System.out.println(taskManager.getAllEpics());
 
 
-        System.out.println(epic1.getStatus());
-        System.out.println(epic2.getStatus());
-        System.out.println();
-
-        System.out.println("Обновим подзадачу4");
-        SubTask subtask55 = new SubTask("subtask555 instead 3", "descr888 instead 7",
-                StatusOfTask.NEW, 7, epic2.getId());
-        taskManager.updateSubTask(subtask55);
-
-        System.out.println("Обновим подзадачу1, но неверный айди");
+        System.out.println("----------Обновим подзадачу3 через конструктор 2");
+        SubTask subtask33 = new SubTask("subtask333 instead 3", "descr777 instead 7",
+                StatusOfTask.NEW, subTask3.getId(), epic2.getId());
+        taskManager.updateSubTask(subtask33);
+        System.out.println(taskManager.getAllSubTasks());
+        System.out.println(taskManager.getAllEpics());
+        System.out.println("----------Обновим подзадачу1 через конструктор 2, но неверный айди");
         SubTask subtask11 = new SubTask("subtask111 instead 1", "descr111 instead 4",
                 StatusOfTask.NEW, 100, epic1.getId());
         taskManager.updateSubTask(subtask11);
-
-        System.out.println(taskManager.getAllSubTasks());
         System.out.println(taskManager.getSubTaskByEpic(epic1.getId()));
-                System.out.println("-------");
+        System.out.println(taskManager.getAllEpics());
 
+        System.out.println("-------Удаление");
         //Удаляем одну из задач и один из эпиков
         taskManager.deleteTaskById(task2.getId());
         taskManager.deleteEpicById(epic1.getId());
-        taskManager.deleteSubTaskById(subTask4.getId());
+        taskManager.deleteSubTaskById(subTask3.getId());
 
-        //Проверяем удаление 2мя методами
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllSubTasks());
         System.out.println(taskManager.getAllEpics());
+        System.out.println("----");
+        System.out.println(taskManager.getSubTaskByEpic(epic2.getId()));
+        taskManager.deleteEpicById(epic2.getId());
+
+        System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllSubTasks());
+        System.out.println(taskManager.getAllEpics());
+
     }
 }
