@@ -1,4 +1,4 @@
-package tasks;
+package model;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,15 @@ public class Epic extends Task {
      public Epic(String name, String description) {
         super(name, description, StatusOfTask.NEW);
         subTasks = new ArrayList<>();
+    }
+    // Для создания или обновления эпиков + занесения в историю уникального экземпляра
+    public Epic(String name, String description, StatusOfTask status, Integer id) {
+         super(name, description,status, id);
+    }
+
+    @Override
+    public Epic getSnapshot() {
+        return new Epic (this.getName(), this.getDescription(), this.getStatus(), this.getId());
     }
 
     public void setSubTask(SubTask subTask) {

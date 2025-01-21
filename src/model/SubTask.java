@@ -1,4 +1,4 @@
-package tasks;
+package model;
 
 public class SubTask extends Task {
 
@@ -8,11 +8,14 @@ public class SubTask extends Task {
         super(name, description, status);
         this.epicId = epicId;
     }
-    //Конструктор только для проверки
-    // создания обновленного объекта с тем же айди. Будет удален (если не требуется).
+    // Для создания или обновления подзадач + занесения в историю уникального экземпляра
     public SubTask(String name, String description, StatusOfTask status, int id, int epicId) {
         super(name, description, status, id);
         this.epicId = epicId;
+    }
+    @Override
+    public SubTask getSnapshot() {
+        return new SubTask (this.getName(), this.getDescription(), this.getStatus(), this.getId(), this.epicId);
     }
 
     public int getEpicId () {

@@ -1,4 +1,4 @@
-package tasks;
+package model;
 
 import java.util.Objects;
 
@@ -13,13 +13,16 @@ public class Task {
         this.description = description;
         this.status = status;
     }
-    //Конструктор только для проверки
-    // создания обновленного объекта с тем же айди. Будет удален (если не требуется).
+    // Для создания или обновления задач + занесения в историю уникального экземпляра
     public Task(String name, String description, StatusOfTask status, Integer id) {
         this.name = name;
         this.description = description;
         this.status = status;
         this.id = id;
+    }
+
+    public Task getSnapshot() {
+        return new Task (this.getName(), this.getDescription(), this.getStatus(), this.getId());
     }
 
     @Override
@@ -39,7 +42,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.getClass().getName() + " {" +
+        return this.getClass().getSimpleName() + " {" +
                 "name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status + '\'' +
