@@ -204,6 +204,14 @@ public class Main {
         taskManager.updateTask(task7);
         taskManager.getTask(task7.getId());
 
+        Epic epic3 = new Epic ("epic3", "descr15");
+        System.out.println(taskManager.setTask(epic3));
+        taskManager.getTask(epic3.getId());
+
+//        Task task33 = new Task ("task33", "descr153", StatusOfTask.NEW);
+//        taskManager.setEpic(task33);
+//        taskManager.getEpic(task33.getId());
+
 
         printAllTasks(taskManager);
 

@@ -1,10 +1,11 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
-    private ArrayList<SubTask> subTasks;
+    private List<SubTask> subTasks;
 
      public Epic(String name, String description) {
         super(name, description, StatusOfTask.NEW);
@@ -13,6 +14,7 @@ public class Epic extends Task {
     // Для создания или обновления эпиков + занесения в историю уникального экземпляра
     public Epic(String name, String description, StatusOfTask status, Integer id) {
          super(name, description,status, id);
+        subTasks = new ArrayList<>();
     }
 
     @Override

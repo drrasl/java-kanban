@@ -2,11 +2,11 @@ package service;
 
 import model.Task;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public interface HistoryManager {
+interface HistoryManager {
 
-    public void setHistory (Task anyTask);
+    void setHistory (Task anyTask);
 
-    public ArrayList<Task> getHistory ();
+    List<Task> getHistory ();
 }

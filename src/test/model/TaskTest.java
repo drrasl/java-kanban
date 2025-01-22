@@ -25,4 +25,10 @@ class TaskTest {
         assertEquals(task, tasks.get(0), "Задачи не совпадают.");
     }
 
+    @Test
+    void addEpicCannotPutInTask() {
+        Epic epic = new Epic ("epic3", "descr15");
+        assertEquals(-1, taskManager.setTask(epic), "эпик добавился в таск");
+    }
+
 }
