@@ -1,5 +1,9 @@
-import model.*;
-import service.*;
+import model.Epic;
+import model.StatusOfTask;
+import model.SubTask;
+import model.Task;
+import service.Managers;
+import service.TaskManager;
 
 public class Main {
 
@@ -211,6 +215,14 @@ public class Main {
 //        Task task33 = new Task ("task33", "descr153", StatusOfTask.NEW);
 //        taskManager.setEpic(task33);
 //        taskManager.getEpic(task33.getId());
+
+        Epic epic17 = new Epic("Test addNewEpic1", "Test addNewEpic description1");
+        taskManager.setEpic(epic17);
+        SubTask subTask17 = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                StatusOfTask.NEW, epic17.getId(), epic17.getId());
+        taskManager.setSubTask(subTask17);
+        System.out.println(epic17.getId());
+        System.out.println(subTask17.getEpicId() + "," + subTask17.getId());
 
 
         printAllTasks(taskManager);

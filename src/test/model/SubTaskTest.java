@@ -35,14 +35,10 @@ class SubTaskTest {
     @Test
     void errorWhenEpicAddedAsSubTaskAndBack() {
         Epic epic1 = new Epic("Test addNewEpic1", "Test addNewEpic description1");
+        taskManager.setEpic(epic1);
         SubTask subTask1 = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
-                StatusOfTask.NEW, epic1.getId());
-        assertNotEquals(SubTask.class, epic1.getClass(), "Классы одинаковые-эпик может добавиться в субтаск" );
-        assertNotEquals(Epic.class, subTask1.getClass(), "Классы одинаковые-субтаск может добавиться в эпик" );
-
-        //    assertEquals(-1, taskManager.setSubTask(epic1);, "Эпик добавился как Подзадача - это ошибка");
-        // таким образом не получается проверить, программа сразу ругается, если на вход субтаска поступает эпик
-        // и выдает ошибку, даже, если в аргументе привести эпик к субтаску, то тест выдает ошибку, но пропускает
-        // в компилятор: assertEquals(-1, taskManager.setSubTask((SubTask) (Task) epic1);
+            StatusOfTask.NEW, epic1.getId(), epic1.getId());
+        taskManager.setSubTask(subTask1);
+        assertNotEquals(epic1.getId(), subTask1.getId(), "ID одинаковые - сабтаск создался под ID эпика" );
     }
 }
