@@ -39,7 +39,7 @@ public class Main {
         }
         System.out.println("--------------------Добавляем и выводим в историю остальные таски по очереди");
 
-        Epic epic1 = new Epic ("epic1", "descr3");
+        Epic epic1 = new Epic("epic1", "descr3");
         taskManager.setEpic(epic1);
         taskManager.getEpic(epic1.getId());
 
@@ -55,7 +55,7 @@ public class Main {
         taskManager.getSubTask(subTask2.getId());
         taskManager.getSubTask(subTask10.getId());
 
-        Epic epic2 = new Epic ("epic2", "descr6");
+        Epic epic2 = new Epic("epic2", "descr6");
         taskManager.setEpic(epic2);
         taskManager.getEpic(epic2.getId());
         SubTask subTask3 = new SubTask("subtask3", "descr7", StatusOfTask.NEW, epic2.getId());
