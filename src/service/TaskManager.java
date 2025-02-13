@@ -43,7 +43,7 @@ public interface TaskManager {
 
     void deleteEpicById(Integer id);
 
-    List<SubTask> getSubTaskByEpic (int epicId);
+    List<SubTask> getSubTaskByEpic(int epicId);
 
-    List<Task> getTasks ();
+    List<Task> getTasks();
 }

@@ -140,6 +140,7 @@ class InMemoryHistoryManagerTest {
         assertEquals(0, history.size(), "объект не удалился");
 
     }
+
     @Test
     void nodeRemoveTest() {
         InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
@@ -154,7 +155,6 @@ class InMemoryHistoryManagerTest {
         assertEquals(history.get(task3.getId()), history.get(task1.getId()).next, "третий элемент не связался с next первого");
         assertNull(history.get(task3.getId()).next, "next третьего элемента не null");
     }
-
 
 
 }

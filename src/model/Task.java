@@ -13,6 +13,7 @@ public class Task {
         this.description = description;
         this.status = status;
     }
+
     // Для создания или обновления задач + занесения в историю уникального экземпляра
     public Task(String name, String description, StatusOfTask status, Integer id) {
         this.name = name;
@@ -22,7 +23,7 @@ public class Task {
     }
 
     public Task getSnapshot() {
-        return new Task (this.getName(), this.getDescription(), this.getStatus(), this.getId());
+        return new Task(this.getName(), this.getDescription(), this.getStatus(), this.getId());
     }
 
     @Override

@@ -24,7 +24,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public int setTask(Task task) {
-        if(task != null && task.getClass() == Task.class) {
+        if (task != null && task.getClass() == Task.class) {
             id++;
             task.setId(id);
             tasksMap.put(id, task);
@@ -188,7 +188,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<SubTask> getSubTaskByEpic (int epicId) {
+    public ArrayList<SubTask> getSubTaskByEpic(int epicId) {
         if (epicMap.containsKey(epicId)) {
             return epicMap.get(epicId).getSubTasks();
         } else {
@@ -197,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public ArrayList<Task> getTasks () {
+    public ArrayList<Task> getTasks() {
         return (ArrayList<Task>) historyManager.getTasks();
     }
 }
