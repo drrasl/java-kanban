@@ -73,4 +73,42 @@ class InMemoryTaskManagerTest {
         assertEquals(StatusOfTask.DONE, taskManager.getTask(task5ID).getStatus(), "Статус задачи " +
                 "изменился после добавления Задачи" );
     }
+
+    @Test
+    void removeAllTasksTest() {
+        taskManager.removeAllTasks();
+        assertEquals(0, taskManager.getAllTasks().size(), "Не все таски были удалены");
+    }
+
+    @Test
+    void removeAllSubTasksTest() {
+        taskManager.removeAllSubTasks();
+        assertEquals(0, taskManager.getAllSubTasks().size(), "Не все подзадачи были удалены");
+    }
+
+    @Test
+    void removeAllEpicTest() {
+        taskManager.removeAllEpics();
+        assertEquals(0, taskManager.getAllSubTasks().size(), "Не все подзадачи были удалены");
+        assertEquals(0, taskManager.getAllEpics().size(), "Не все эпики были удалены");
+    }
+
+    @Test
+    void deleteTaskByIdTest() {
+        taskManager.deleteTaskById(task1.getId());
+        assertNull(taskManager.getTask(task1.getId()), "Таск не был удален");
+    }
+
+    @Test
+    void deleteSubTaskByIdTest() {
+        taskManager.deleteSubTaskById(subTask1.getId());
+        assertNull(taskManager.getSubTask(subTask1.getId()), "Подзадача не была удалена");
+    }
+
+    @Test
+    void deleteEpicByIdTest() {
+        taskManager.deleteEpicById(epic2.getId());
+        assertNull(taskManager.getEpic(epic2.getId()), "Эпик не был удален");
+        assertNull(taskManager.getSubTaskByEpic(epic2.getId()), "Подзадачи не были удалены");
+    }
 }
