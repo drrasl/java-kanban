@@ -81,7 +81,7 @@ public class Main {
             System.out.println(task);
         }
 
-        System.out.println("--------------------Обновляем таск 7 (id=8) [должен переместиться в конец]");
+        System.out.println("--------------------Обновляем таск 7 (id=9) [должен переместиться в конец]");
         taskManager.getTask(task7.getId()).setStatus(StatusOfTask.IN_PROGRESS);
         //после смены статуса требуется обновить таск-менеджер
         taskManager.updateTask(task7);
