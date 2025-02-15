@@ -57,7 +57,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void changeTaskNumber10AndPutInHistoryManagerTast() {
+    void changeTaskNumber10AndPutInHistoryManagerTest() {
         fillInArray();
         Task task10upd = new Task("task10UPD", "descr10UPD", StatusOfTask.DONE, task10.getId());
         historyManager.setHistory(task10upd);
@@ -92,7 +92,7 @@ class InMemoryHistoryManagerTest {
         historyManager.setHistory(task1);
         historyManager.setHistory(task1);
         final List<Task> history = historyManager.getTasks();
-        assertNotNull(history.get(0), "Таск удалился и не появился");
+        assertNotNull(history.getFirst(), "Таск удалился и не появился");
         assertEquals(1, history.size(), "Длинна != 1, либо таск не создался после удаления, " +
                 "либо не удалился и добавился вторым");
     }
@@ -113,7 +113,7 @@ class InMemoryHistoryManagerTest {
     @Test
     void checkProperFirstNodeAddedInHashMapTest() {
         InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-        inMemoryHistoryManager.linkLast(task1);
+        inMemoryHistoryManager.setHistory(task1);
         assertNotNull(inMemoryHistoryManager.getHead(), "head при добавлении 1го элемента остался null");
         assertNotNull(inMemoryHistoryManager.getTail(), "tail при добавлении 1го элемента остался null");
         assertNotNull(inMemoryHistoryManager.getHistoryMap().get(task1.getId()), "node1 не добавлена в " +
@@ -125,8 +125,8 @@ class InMemoryHistoryManagerTest {
     @Test
     void checkProperSecondNodeAddedInHashMapTest() {
         InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-        inMemoryHistoryManager.linkLast(task1);
-        inMemoryHistoryManager.linkLast(task2);
+        inMemoryHistoryManager.setHistory(task1);
+        inMemoryHistoryManager.setHistory(task2);
         assertEquals(2, inMemoryHistoryManager.getHistoryMap().size(), "размер не соответствует 2");
         assertEquals(task2, inMemoryHistoryManager.getHistoryMap().get(task2.getId()).getData(), "task2 не лежит" +
                 "в node2");
@@ -144,14 +144,14 @@ class InMemoryHistoryManagerTest {
     @Test
     void nodeRemoveTest() {
         InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
-        inMemoryHistoryManager.linkLast(task1);
-        inMemoryHistoryManager.linkLast(task2);
-        inMemoryHistoryManager.linkLast(task3);
+        inMemoryHistoryManager.setHistory(task1);
+        inMemoryHistoryManager.setHistory(task2);
+        inMemoryHistoryManager.setHistory(task3);
         HashMap<Integer, Node<Task>> history = (HashMap<Integer, Node<Task>>) inMemoryHistoryManager.getHistoryMap();
         inMemoryHistoryManager.removeHistory(task2.getId());
         assertFalse(history.containsKey(task2.getId()), "Нода 2 не удалилась из хеш-мапы");
         assertNull(history.get(task1.getId()).prev, "prev первого элемента не null");
-        assertEquals(history.get(task3.getId()).prev, history.get(task1.getId()), "prev третьего элемента не связался с первым");
+        assertEquals(history.get(task1.getId()), history.get(task3.getId()).prev, "prev третьего элемента не связался с первым");
         assertEquals(history.get(task3.getId()), history.get(task1.getId()).next, "третий элемент не связался с next первого");
         assertNull(history.get(task3.getId()).next, "next третьего элемента не null");
     }

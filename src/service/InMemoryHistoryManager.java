@@ -2,7 +2,10 @@ package service;
 
 import model.Task;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -25,8 +28,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public void linkLast(Task task) {
-        Node<Task> oldTail = tail;
+    private void linkLast(Task task) {
+        final Node<Task> oldTail = tail;
         Node<Task> newNode = new Node<>(oldTail, task, null);
         tail = newNode;
         if (oldTail == null) {
@@ -56,42 +59,34 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
-    public int removeNode(Node<Task> nodeToRemove) {
+    private void removeNode(Node<Task> nodeToRemove) {
         if (nodeToRemove == null) {
-            return -1;
+            return;
         }
-        Node<Task> nextToNodeToRemove = null;
-        Node<Task> prevToNodeToRemove = null;
+        Node<Task> nextToNodeToRemove;
+        Node<Task> prevToNodeToRemove;
 
         if (nodeToRemove.next == null && nodeToRemove.prev == null) {
             head = null;
             tail = null;
-            return nodeToRemove.getData().getId();
         } else {
 
             if (nodeToRemove.next != null) {
                 nextToNodeToRemove = nodeToRemove.next;
+                nextToNodeToRemove.prev = nodeToRemove.prev;
             } else {
-                tail = nodeToRemove;
+                prevToNodeToRemove = nodeToRemove.prev;
+                tail = prevToNodeToRemove;
+                tail.next = null;
             }
             if (nodeToRemove.prev != null) {
                 prevToNodeToRemove = nodeToRemove.prev;
+                prevToNodeToRemove.next = nodeToRemove.next;
             } else {
-                head = nodeToRemove;
-            }
-            if (prevToNodeToRemove != null) {
-                prevToNodeToRemove.next = nextToNodeToRemove;
-            } else {
+                nextToNodeToRemove = nodeToRemove.next;
                 head = nextToNodeToRemove;
-                nextToNodeToRemove.prev = null;
+                head.prev = null;
             }
-            if (nextToNodeToRemove != null) {
-                nextToNodeToRemove.prev = prevToNodeToRemove;
-            } else {
-                tail = prevToNodeToRemove;
-                prevToNodeToRemove.next = null;
-            }
-            return nodeToRemove.getData().getId();
         }
     }
 
