@@ -37,8 +37,8 @@ class SubTaskTest {
         Epic epic1 = new Epic("Test addNewEpic1", "Test addNewEpic description1");
         taskManager.setEpic(epic1);
         SubTask subTask1 = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
-            StatusOfTask.NEW, epic1.getId(), epic1.getId());
+                StatusOfTask.NEW, epic1.getId(), epic1.getId());
         taskManager.setSubTask(subTask1);
-        assertNotEquals(epic1.getId(), subTask1.getId(), "ID одинаковые - сабтаск создался под ID эпика" );
+        assertNotEquals(epic1.getId(), subTask1.getId(), "ID одинаковые - сабтаск создался под ID эпика");
     }
 }

@@ -4,7 +4,6 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
@@ -44,7 +43,7 @@ public interface TaskManager {
 
     void deleteEpicById(Integer id);
 
-    List<SubTask> getSubTaskByEpic (int epicId);
+    List<SubTask> getSubTaskByEpic(int epicId);
 
-    List<Task> getHistory ();
+    List<Task> getTasks();
 }

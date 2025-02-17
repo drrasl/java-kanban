@@ -7,27 +7,28 @@ public class Epic extends Task {
 
     private List<SubTask> subTasks;
 
-     public Epic(String name, String description) {
+    public Epic(String name, String description) {
         super(name, description, StatusOfTask.NEW);
         subTasks = new ArrayList<>();
     }
+
     // Для создания или обновления эпиков + занесения в историю уникального экземпляра
     public Epic(String name, String description, StatusOfTask status, Integer id) {
-         super(name, description,status, id);
+        super(name, description, status, id);
         subTasks = new ArrayList<>();
     }
 
     @Override
     public Epic getSnapshot() {
-        return new Epic (this.getName(), this.getDescription(), this.getStatus(), this.getId());
+        return new Epic(this.getName(), this.getDescription(), this.getStatus(), this.getId());
     }
 
     public void setSubTask(SubTask subTask) {
-         subTasks.add(subTask);
+        subTasks.add(subTask);
 
     }
 
-    public void deleteSubTask (SubTask subTask) {
+    public void deleteSubTask(SubTask subTask) {
         subTasks.remove(subTask);
     }
 
@@ -39,7 +40,7 @@ public class Epic extends Task {
         this.subTasks.clear();
     }
 
-    public void updateEpicStatus () {
+    public void updateEpicStatus() {
         int newStatusCounter = 0;
         int doneStatusCounter = 0;
         if (subTasks != null) {

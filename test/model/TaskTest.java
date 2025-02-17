@@ -27,7 +27,7 @@ class TaskTest {
 
     @Test
     void addEpicCannotPutInTask() {
-        Epic epic = new Epic ("epic3", "descr15");
+        Epic epic = new Epic("epic3", "descr15");
         assertEquals(-1, taskManager.setTask(epic), "эпик добавился в таск");
     }
 
