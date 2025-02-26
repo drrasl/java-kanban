@@ -20,9 +20,8 @@ class FileBackedTaskManagerTest {
 
     @BeforeAll
     public static void createFile() {
-
         try {
-        path = Files.createTempFile(Paths.get("test/service/testFiles"), "test", ".csv");
+            path = Files.createTempFile(Paths.get("test/service/"), "test", ".csv");
         } catch (IOException e) {
             System.out.println("Ошибка: Временный файл не создался");
         }
@@ -53,8 +52,8 @@ class FileBackedTaskManagerTest {
         } catch (IOException e) {
             System.out.println("Не считался файл");
         }
-        assertEquals(task1, FileBackedTaskManager.fromString(lines [1]), "Таски 1 разные");
-        assertEquals(task2, FileBackedTaskManager.fromString(lines [2]), "Таски 2  разные");
+        assertEquals(task1, FileBackedTaskManager.fromString(lines[1]), "Таски 1 разные");
+        assertEquals(task2, FileBackedTaskManager.fromString(lines[2]), "Таски 2  разные");
     }
 
     @Test
@@ -66,7 +65,7 @@ class FileBackedTaskManagerTest {
     @Test
     void loadFromFile() {
         FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(path.toFile());
-        assertEquals(taskManager.getAllTasks(), taskManager2.getAllTasks(), "Таскменеджеры не равны" );
+        assertEquals(taskManager.getAllTasks(), taskManager2.getAllTasks(), "Таскменеджеры не равны");
     }
 
     @Test
@@ -76,7 +75,7 @@ class FileBackedTaskManagerTest {
     }
 
     @AfterAll
-    static void deleteAtTheEnd(){
+    static void deleteAtTheEnd() {
         File dir = new File((path.toString()));
         dir.deleteOnExit();
     }
