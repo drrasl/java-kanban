@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class FileBackedTaskManagerTest {
 
-    static Path path = null;
+    static Path path;
 
     @BeforeAll
     public static void createFile() {
