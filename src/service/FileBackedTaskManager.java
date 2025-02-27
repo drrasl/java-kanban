@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class FileBackedTaskManager extends InMemoryTaskManager implements TaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private static final String FILE_NAME = "src//resources//backup.csv";
     Path backupFile;
@@ -38,10 +38,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             } catch (IOException e) {
                 System.out.println("Ошибка создания файла backup.csv");
             }
+        } else {
+            backupFile = Paths.get(FILE_NAME);
         }
     }
 
-    public void save() throws ManagerSaveException {
+    private void save() throws ManagerSaveException {
         ArrayList<Task> tasks = getAllTasks();
         ArrayList<Epic> epics = getAllEpics();
         ArrayList<SubTask> subTasks = getAllSubTasks();
@@ -68,7 +70,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
     }
 
-    public String toString(Task task) {
+    private String toString(Task task) {
         TypesOfTasks type;
         if (task.getClass() == Task.class) {
             type = TypesOfTasks.TASK;
@@ -88,7 +90,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager();
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file.toPath());
         String backLog = "";
         try {
             backLog = Files.readString(file.toPath());
@@ -96,40 +98,47 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
             System.out.println("Ошибка чтения из файла backup.csv");
         }
         String[] tasks = backLog.split("\n");
-        for (int i = 0; i < tasks.length; i++) {
-            if (i > 0) {
-                if (tasks[i].contains(TypesOfTasks.EPIC.toString())) {
-                    try {
-                        Epic epic = (Epic) fromString(tasks[i]);
-                        fileBackedTaskManager.epicMap.put(epic.getId(), epic);
-                    } catch (NullPointerException e) {
-                        System.out.println("Эпик вернулся как null");
-                    }
-                } else if (tasks[i].contains(TypesOfTasks.SUBTASK.toString())) {
-                    try {
-                        SubTask subTask = (SubTask) fromString(tasks[i]);
-                        fileBackedTaskManager.subTasksMap.put(subTask.getId(), subTask);
-                        Epic epic;
-                        epic = fileBackedTaskManager.epicMap.get(subTask.getEpicId());
-                        epic.setSubTask(subTask);
-                        epic.updateEpicStatus();
-                    } catch (NullPointerException e) {
-                        System.out.println("Подзадача вернулась как null");
-                    }
-                } else {
-                    try {
-                        Task task = fromString(tasks[i]);
-                        fileBackedTaskManager.tasksMap.put(task.getId(), task);
-                    } catch (NullPointerException e) {
-                        System.out.println("Задача вернулась как null");
-                    }
+        int maxId = 0;
+        int id = 0;
+        for (int i = 1; i < tasks.length; i++) {
+            if (tasks[i].contains(TypesOfTasks.EPIC.toString())) {
+                try {
+                    Epic epic = (Epic) fromString(tasks[i]);
+                    fileBackedTaskManager.epicMap.put(epic.getId(), epic);
+                    id = epic.getId();
+                } catch (NullPointerException e) {
+                    System.out.println("Эпик вернулся как null");
+                }
+            } else if (tasks[i].contains(TypesOfTasks.SUBTASK.toString())) {
+                try {
+                    SubTask subTask = (SubTask) fromString(tasks[i]);
+                    fileBackedTaskManager.subTasksMap.put(subTask.getId(), subTask);
+                    Epic epic;
+                    epic = fileBackedTaskManager.epicMap.get(subTask.getEpicId());
+                    epic.setSubTask(subTask);
+                    epic.updateEpicStatus();
+                    id = subTask.getId();
+                } catch (NullPointerException e) {
+                    System.out.println("Подзадача вернулась как null");
+                }
+            } else {
+                try {
+                    Task task = fromString(tasks[i]);
+                    fileBackedTaskManager.tasksMap.put(task.getId(), task);
+                    id = task.getId();
+                } catch (NullPointerException e) {
+                    System.out.println("Задача вернулась как null");
                 }
             }
+            if (id > maxId) {
+                maxId = id;
+            }
         }
+        fileBackedTaskManager.setId(maxId);
         return fileBackedTaskManager;
     }
 
-    public static Task fromString(String value) {
+    private static Task fromString(String value) {
         StatusOfTask status = StatusOfTask.NEW;
         String[] taskDetails = value.split(",");
 
@@ -151,7 +160,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         }
         return null;
     }
-
 
     @Override
     public int setTask(Task task) {
@@ -187,21 +195,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
     }
 
     @Override
-    public ArrayList<Task> getAllTasks() {
-        return super.getAllTasks();
-    }
-
-    @Override
-    public ArrayList<SubTask> getAllSubTasks() {
-        return super.getAllSubTasks();
-    }
-
-    @Override
-    public ArrayList<Epic> getAllEpics() {
-        return super.getAllEpics();
-    }
-
-    @Override
     public void removeAllTasks() {
         super.removeAllTasks();
         try {
@@ -229,21 +222,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (ManagerSaveException exception) {
             System.out.println(exception.getMessage());
         }
-    }
-
-    @Override
-    public Task getTask(int id) {
-        return super.getTask(id);
-    }
-
-    @Override
-    public SubTask getSubTask(int id) {
-        return super.getSubTask(id);
-    }
-
-    @Override
-    public Epic getEpic(int id) {
-        return super.getEpic(id);
     }
 
     @Override
@@ -304,15 +282,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements TaskMa
         } catch (ManagerSaveException exception) {
             System.out.println(exception.getMessage());
         }
-    }
-
-    @Override
-    public ArrayList<SubTask> getSubTaskByEpic(int epicId) {
-        return super.getSubTaskByEpic(epicId);
-    }
-
-    @Override
-    public ArrayList<Task> getTasks() {
-        return super.getTasks();
     }
 }

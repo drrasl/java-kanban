@@ -200,4 +200,8 @@ public class InMemoryTaskManager implements TaskManager {
     public ArrayList<Task> getTasks() {
         return (ArrayList<Task>) historyManager.getTasks();
     }
+
+    protected void setId(int id) {
+        this.id = id;
+    }
 }

@@ -109,8 +109,12 @@ public class Main {
 
         Path file = Paths.get("src//resources//backup.csv");
         FileBackedTaskManager fileManager2 = FileBackedTaskManager.loadFromFile(file.toFile());
-        //Добавим запись в историю
-        fileManager2.getTask(task1.getId());
+
+        System.out.println("-------------------Добавим новый таск (id должен быть = 12, а не 1) и выведем его в историю");
+
+        Task task11 = new Task("task11", "descr15", StatusOfTask.NEW);
+        fileManager2.setTask(task11);
+        fileManager2.getTask(task11.getId());
 
         printAllTasks(fileManager2);
 
