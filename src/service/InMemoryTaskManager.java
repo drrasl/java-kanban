@@ -10,9 +10,9 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
-    private Map<Integer, Task> tasksMap;
-    private Map<Integer, SubTask> subTasksMap;
-    private Map<Integer, Epic> epicMap;
+    protected Map<Integer, Task> tasksMap;
+    protected Map<Integer, SubTask> subTasksMap;
+    protected Map<Integer, Epic> epicMap;
     private HistoryManager historyManager;
 
     public InMemoryTaskManager() {
@@ -199,5 +199,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public ArrayList<Task> getTasks() {
         return (ArrayList<Task>) historyManager.getTasks();
+    }
+
+    protected void setId(int id) {
+        this.id = id;
     }
 }
