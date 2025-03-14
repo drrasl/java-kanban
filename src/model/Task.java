@@ -17,8 +17,8 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.startTime = LocalDateTime.now();
-        this.duration = Duration.ZERO;
+        this.startTime = null;
+        this.duration = null;
     }
 
     // Для создания или обновления задач + занесения в историю уникального экземпляра
@@ -106,7 +106,11 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
-        return startTime.plus(duration);
+        if (startTime == null | duration == null) {
+            return null;
+        } else {
+            return startTime.plus(duration);
+        }
     }
 
     public Duration getDuration() {

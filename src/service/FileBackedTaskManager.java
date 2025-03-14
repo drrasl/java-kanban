@@ -88,10 +88,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } else {
             type = TypesOfTasks.SUBTASK;
         }
+        long durationInMinutes;
+        if (task.getDuration() == null) {
+            durationInMinutes = 0;
+        } else {
+            durationInMinutes = task.getDuration().toMinutes();
+        }
         String info = task.getId() + "," + type + "," +
                 task.getName() + "," + task.getStatus() + "," +
                 task.getDescription() + "," + task.getStartTime() + "," +
-                task.getDuration().toMinutes() + "," + task.getEndTime();
+                durationInMinutes + "," + task.getEndTime();
         if (type != TypesOfTasks.SUBTASK) {
             return info;
         } else {

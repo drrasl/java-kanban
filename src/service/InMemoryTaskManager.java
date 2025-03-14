@@ -88,7 +88,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.subTasksMap.clear();
         epicMap.values().forEach(epic -> {
             epic.removeSubTasks();
-            epic.updateEpicStatus();
+            epic.updateEpicStatus(); // Метод updateEpicStatus() в конце содержит команду на метод updateEpicTime()
         });
     }
 
@@ -135,7 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.deleteSubTask(subTaskOld);
                 epic.setSubTask(subTask);
                 subTasksMap.put(subTask.getId(), subTask);
-                epic.updateEpicStatus();
+                epic.updateEpicStatus(); // Метод updateEpicStatus() в конце содержит команду на метод updateEpicTime()
             }
         }
     }
@@ -160,7 +160,7 @@ public class InMemoryTaskManager implements TaskManager {
             historyManager.removeHistory(id);
             int epicId = subTasksMap.get(id).getEpicId();
             epicMap.get(epicId).deleteSubTask(subTasksMap.get(id));
-            epicMap.get(epicId).updateEpicStatus();
+            epicMap.get(epicId).updateEpicStatus(); // Метод updateEpicStatus() в конце содержит команду на метод updateEpicTime()
             subTasksMap.remove(id);
         }
     }
@@ -213,7 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     protected boolean isNoTaskIntersection(Task task) {
-        if (getPrioritizedTasks().isEmpty()) {
+        if (getPrioritizedTasks().isEmpty() | task.getStartTime() == null) {
             return true;
         } else {
             /* Проверяем с каждым (искомый таск - отрезок AB, таски в дереве ab):
@@ -223,6 +223,9 @@ public class InMemoryTaskManager implements TaskManager {
               г) A = a || A = b || B = a || B = b
               */
             return getPrioritizedTasks().stream()
+                    .filter(item ->
+                            task.getId() != item.getId()
+                    )
                     .noneMatch(item -> {
                         return (task.getStartTime().isAfter(item.getStartTime()) &&
                                 task.getStartTime().isBefore(item.getEndTime())) ||

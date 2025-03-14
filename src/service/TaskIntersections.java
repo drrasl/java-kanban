@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /*
-    Создан отдельный класс для поиска пересечений
+    Создан отдельный класс для поиска пересечений.
     Может быть встроенным в InMemoryTaskManager.class или даже методом в нем.
     Так как на данный момент не планируется его использовать в приложении, то
     вынес его в отдельный метод. Цель - поиск пересечений за О(1).
@@ -28,7 +28,7 @@ public class TaskIntersections {
 
     public TaskIntersections(int year) {
         this.year = year;
-        timeTaskMap = new HashMap<>(intervalsQty);
+        timeTaskMap = new HashMap<>(); //Уберу создание мапы определенного размера, чтобы сэкономить память
     }
 
     protected int fillInMap(Task task) {
@@ -158,5 +158,9 @@ public class TaskIntersections {
         System.out.println("Проверим мапу");
         System.out.println(inter.timeTaskMap.get(0) + " / " + inter.timeTaskMap.get(1) + " / " + inter.timeTaskMap.get(2) + " / " + inter.timeTaskMap.get(3) + " / " + inter.timeTaskMap.get(4)
                 + " / " + inter.timeTaskMap.get(5));
+
+        //Напечатаем получившуюся мапу
+        System.out.println("Напечатаем получившуюся мапу");
+        System.out.println(inter.timeTaskMap);
     }
 }

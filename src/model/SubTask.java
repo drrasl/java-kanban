@@ -10,8 +10,8 @@ public class SubTask extends Task {
     public SubTask(String name, String description, StatusOfTask status, int epicId) {
         super(name, description, status);
         this.epicId = epicId;
-        this.startTime = LocalDateTime.now();
-        this.duration = Duration.ZERO;
+        this.startTime = null;
+        this.duration = null;
     }
 
     // Для создания или обновления подзадач + занесения в историю уникального экземпляра
