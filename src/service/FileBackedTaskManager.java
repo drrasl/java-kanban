@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -43,13 +45,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() throws ManagerSaveException {
+    //Поменял метод с private на protected - для возможности произвести тест на выкидываемую ошибку, иначе она не ловится
+    //Тест exceptionTest. Оставить ли метод protected или лучше private? Иначе я до ошибки не доберусь.
+    protected void save() throws ManagerSaveException {
         ArrayList<Task> tasks = getAllTasks();
         ArrayList<Epic> epics = getAllEpics();
         ArrayList<SubTask> subTasks = getAllSubTasks();
 
+        if (backupFile == null) {
+            throw new ManagerSaveException("Файл для сохранения отсутствует");
+        }
+
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(String.valueOf(backupFile)))) {
-            fileWriter.write("Id,type,name,status,description,epic_id(for_subtasks)" + "\n");
+            fileWriter.write("Id,type,name,status,description,startTime,duration(min),endTime,epic_id(for_subtasks)"
+                    + "\n");
             if (tasks != null) {
                 for (Task task : tasks) {
                     fileWriter.write(toString(task) + "\n");
@@ -81,7 +90,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
         String info = task.getId() + "," + type + "," +
                 task.getName() + "," + task.getStatus() + "," +
-                task.getDescription();
+                task.getDescription() + "," + task.getStartTime() + "," +
+                task.getDuration().toMinutes() + "," + task.getEndTime();
         if (type != TypesOfTasks.SUBTASK) {
             return info;
         } else {
@@ -149,14 +159,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         int id = Integer.parseInt(taskDetails[0]);
+        Duration duration = Duration.ofMinutes(Long.parseLong(taskDetails[6]));
+
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+        if (!taskDetails[5].equals("null")) {
+            startTime = LocalDateTime.parse(taskDetails[5]);
+        }
+        if (!taskDetails[7].equals("null")) {
+            endTime = LocalDateTime.parse(taskDetails[7]);
+        }
 
         if (value.contains(TypesOfTasks.EPIC.toString())) {
-            return new Epic(taskDetails[2], taskDetails[4], status, id);
+            return new Epic(taskDetails[2], taskDetails[4], status, id, startTime, duration, endTime);
         } else if (value.contains(TypesOfTasks.SUBTASK.toString())) {
-            int subId = Integer.parseInt(taskDetails[5]);
-            return new SubTask(taskDetails[2], taskDetails[4], status, id, subId);
+            int subId = Integer.parseInt(taskDetails[8]);
+            return new SubTask(taskDetails[2], taskDetails[4], status, id, subId, startTime, duration);
         } else if (value.contains(TypesOfTasks.TASK.toString())) {
-            return new Task(taskDetails[2], taskDetails[4], status, id);
+            return new Task(taskDetails[2], taskDetails[4], status, id, startTime, duration);
         }
         return null;
     }
