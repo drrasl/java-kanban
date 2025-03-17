@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import service.InMemoryTaskManager;
 import service.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,10 +22,12 @@ class SubTaskTest {
 
     @Test
     void addNewSubTask() {
-        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description", StatusOfTask.NEW, 1);
+        SubTask subTask = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
+                StatusOfTask.NEW, 1, LocalDateTime.of(2023, 03, 04, 12, 00),
+                Duration.ofMinutes(60));
         final int subTaskId = taskManager.setSubTask(subTask);
         assertEquals(2, subTaskId, "Подзадача не создалась, так как нет привязки к нужному эпику");
-        final SubTask savedSubTask = taskManager.getSubTask(subTaskId);
+        final SubTask savedSubTask = taskManager.getSubTask(subTaskId).orElse(null);
         assertNotNull(savedSubTask, "Задача не найдена.");
         assertEquals(subTask, savedSubTask, "Задачи не совпадают.");
         final List<SubTask> subTasks = taskManager.getAllSubTasks();
@@ -37,8 +41,9 @@ class SubTaskTest {
         Epic epic1 = new Epic("Test addNewEpic1", "Test addNewEpic description1");
         taskManager.setEpic(epic1);
         SubTask subTask1 = new SubTask("Test addNewSubTask", "Test addNewSubTask description",
-                StatusOfTask.NEW, epic1.getId(), epic1.getId());
+                StatusOfTask.NEW, epic1.getId(), epic1.getId(),
+                LocalDateTime.of(2023, 03, 04, 12, 00), Duration.ofMinutes(60));
         taskManager.setSubTask(subTask1);
-        assertNotEquals(epic1.getId(), subTask1.getId(), "ID одинаковые - сабтаск создался под ID эпика");
+        assertNotEquals(2, subTask1.getId(), "ID одинаковые - сабтаск создался под ID эпика");
     }
 }

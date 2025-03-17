@@ -1,5 +1,6 @@
 package service;
 
+import exceptions.ManagerSaveException;
 import model.StatusOfTask;
 import model.Task;
 import org.junit.jupiter.api.AfterAll;
@@ -7,16 +8,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
 
     static Path path;
+    static Path path1;
 
     @BeforeAll
     public static void createFile() {
@@ -28,10 +29,10 @@ class FileBackedTaskManagerTest {
     }
 
     FileBackedTaskManager taskManager = new FileBackedTaskManager(path);
-    Task task1 = new Task("task1", "descr1", StatusOfTask.DONE);
     int task1ID = taskManager.setTask(task1);
-    Task task2 = new Task("task2", "descr2", StatusOfTask.NEW);
     int task2ID = taskManager.setTask(task2);
+
+    FileBackedTaskManager taskManager3 = new FileBackedTaskManager(path1);
 
     @Test
     void checkBackupFileIsCreatedTest() {
@@ -52,8 +53,8 @@ class FileBackedTaskManagerTest {
         } catch (IOException e) {
             System.out.println("Не считался файл");
         }
-        assertEquals("1,TASK,task1,DONE,descr1", lines[1], "Таски 1 разные");
-        assertEquals("2,TASK,task2,NEW,descr2", lines[2], "Таски 2  разные");
+        assertEquals("1,TASK,task1,DONE,descr1,2023-03-04T12:00,60,2023-03-04T13:00", lines[1], "Таски 1 разные");
+        assertEquals("2,TASK,task2,NEW,descr2,2022-03-04T12:00,60,2022-03-04T13:00", lines[2], "Таски 2  разные");
     }
 
     @Test
@@ -70,13 +71,13 @@ class FileBackedTaskManagerTest {
         } catch (IOException e) {
             System.out.println("Не считался файл");
         }
-        assertEquals("1,TASK,task1,DONE,descr1", lines[1], "Метод неправильно " +
+        assertEquals("1,TASK,task1,DONE,descr1,2023-03-04T12:00,60,2023-03-04T13:00", lines[1], "Метод неправильно " +
                 "преобразовывает в строку");
     }
 
     @Test
     void fromStringTest() {
-        assertEquals(task1, taskManager.getTask(task1.getId()), "Метод неправильно " +
+        assertEquals(task1, taskManager.getTask(task1.getId()).orElse(null), "Метод неправильно " +
                 "преобразовывает из строки");
     }
 
@@ -97,7 +98,8 @@ class FileBackedTaskManagerTest {
     @Test
     void newTaskGeneratedInExistedFile() {
         FileBackedTaskManager taskManager2 = FileBackedTaskManager.loadFromFile(path.toFile());
-        Task task3 = new Task("task3", "descr3", StatusOfTask.NEW);
+        Task task3 = new Task("task3", "descr3", StatusOfTask.NEW,
+                LocalDateTime.of(2021, 03, 04, 12, 00), Duration.ofMinutes(60));
         int task3ID = taskManager2.setTask(task3);
         String[] lines = new String[5];
         try (BufferedReader br = new BufferedReader(new FileReader(path.toString()))) {
@@ -111,13 +113,170 @@ class FileBackedTaskManagerTest {
         } catch (IOException e) {
             System.out.println("Не считался файл");
         }
-        assertEquals("3,TASK,task3,NEW,descr3", lines[3], "Таски 3 разные, запись не добавилась " +
+        assertEquals("3,TASK,task3,NEW,descr3,2021-03-04T12:00,60,2021-03-04T13:00", lines[3], "Таски 3 разные, запись не добавилась " +
                 "после загрузки нового менеджера и создания нового таска");
+    }
+
+    void file2CreationWrongRef() throws IOException {
+        path1 = Files.createTempFile(Paths.get("test/test_1/service/"), "test_1_", ".csv");
+    }
+
+    @Test
+    void creationExceptionTest() {
+        assertThrows(IOException.class, () -> {
+            file2CreationWrongRef();
+        }, "Здесь должна быть ошибка создания файла для записи, а ее нет");
+    }
+
+    void file2Creation() {
+        try {
+            path1 = Files.createTempFile(Paths.get("test/service/"), "test_1_", ".csv");
+        } catch (IOException e) {
+            System.out.println("Ошибка: Временный файл не создался");
+        }
+
+        Task task3 = new Task("task3", "descr3", StatusOfTask.NEW,
+                LocalDateTime.of(1900, 03, 04, 12, 00), Duration.ofMinutes(60));
+
+        taskManager3.setTask(task3);
+
+        try {
+            Files.delete(path1);
+        } catch (NoSuchFileException x) {
+            System.err.format("%s: no such" + " file or directory%n", path1);
+        } catch (DirectoryNotEmptyException x) {
+            System.err.format("%s not empty%n", path1);
+        } catch (IOException x) {
+            // File permission problems are caught here.
+            System.err.println(x);
+        }
+    }
+
+    @Test
+    void exceptionTest() {
+        file2Creation();
+        assertThrows(ManagerSaveException.class, () -> {
+            taskManager3.save();
+        }, "Отсутствие файла должно приводить к ошибке");
     }
 
     @AfterAll
     static void deleteAtTheEnd() {
         File dir = new File((path.toString()));
         dir.deleteOnExit();
+    }
+
+    @Override
+    @Test
+    void setTaskTest() {
+        super.setTaskTest();
+    }
+
+    @Override
+    @Test
+    void setEpicTest() {
+        super.setEpicTest();
+    }
+
+    @Override
+    @Test
+    void setSubTaskTest() {
+        super.setSubTaskTest();
+    }
+
+    @Override
+    @Test
+    void getAllTasksTest() {
+        super.getAllTasksTest();
+    }
+
+    @Override
+    @Test
+    void getAllSubTasksTest() {
+        super.getAllSubTasksTest();
+    }
+
+    @Override
+    @Test
+    void getAllEpicsTest() {
+        super.getAllEpicsTest();
+    }
+
+    @Override
+    @Test
+    void removeAllTasksTest() {
+        super.removeAllTasksTest();
+    }
+
+    @Override
+    @Test
+    void removeAllSubTasksTest() {
+        super.removeAllSubTasksTest();
+    }
+
+    @Override
+    @Test
+    void removeAllEpicsTest() {
+        super.removeAllEpicsTest();
+    }
+
+    @Override
+    @Test
+    void getTaskTest() {
+        super.getTaskTest();
+    }
+
+    @Override
+    @Test
+    void getSubTaskTest() {
+        super.getSubTaskTest();
+    }
+
+    @Override
+    @Test
+    void getEpicTest() {
+        super.getEpicTest();
+    }
+
+    @Override
+    @Test
+    void updateTaskTest() {
+        super.updateTaskTest();
+    }
+
+    @Override
+    @Test
+    void updateSubTaskTest() {
+        super.updateSubTaskTest();
+    }
+
+    @Override
+    @Test
+    void updateEpicTest() {
+        super.updateEpicTest();
+    }
+
+    @Override
+    @Test
+    void deleteTaskByIdTest() {
+        super.deleteTaskByIdTest();
+    }
+
+    @Override
+    @Test
+    void deleteSubTaskByIdTest() {
+        super.deleteSubTaskByIdTest();
+    }
+
+    @Override
+    @Test
+    void deleteEpicByIdTest() {
+        super.deleteEpicByIdTest();
+    }
+
+    @Override
+    @Test
+    void getSubTaskByEpic() {
+        super.getSubTaskByEpic();
     }
 }

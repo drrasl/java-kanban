@@ -5,6 +5,8 @@ import model.StatusOfTask;
 import model.Task;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest {
 
     HistoryManager historyManager = new InMemoryHistoryManager();
-    Task task1 = new Task("task1", "descr1", StatusOfTask.NEW, 1);
-    Task task2 = new Task("task2", "descr2", StatusOfTask.NEW, 2);
-    Task task3 = new Task("task3", "descr3", StatusOfTask.NEW, 3);
-    Task task4 = new Task("task4", "descr4", StatusOfTask.NEW, 4);
-    Task task5 = new Task("task5", "descr5", StatusOfTask.NEW, 5);
-    Task task6 = new Task("task6", "descr6", StatusOfTask.NEW, 6);
-    Task task7 = new Task("task7", "descr7", StatusOfTask.NEW, 7);
-    Task task8 = new Task("task8", "descr8", StatusOfTask.NEW, 8);
-    Task task9 = new Task("task9", "descr9", StatusOfTask.NEW, 9);
-    Task task10 = new Task("task10", "descr10", StatusOfTask.NEW, 10);
-    Task task11 = new Task("task11", "descr11", StatusOfTask.NEW, 11);
-    Epic epic1 = new Epic("epic1", "descr1", StatusOfTask.NEW, 12);
+    Task task1 = new Task("task1", "descr1", StatusOfTask.NEW, 1, LocalDateTime.of(2023, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task2 = new Task("task2", "descr2", StatusOfTask.NEW, 2, LocalDateTime.of(2022, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task3 = new Task("task3", "descr3", StatusOfTask.NEW, 3, LocalDateTime.of(2021, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task4 = new Task("task4", "descr4", StatusOfTask.NEW, 4, LocalDateTime.of(2020, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task5 = new Task("task5", "descr5", StatusOfTask.NEW, 5, LocalDateTime.of(2019, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task6 = new Task("task6", "descr6", StatusOfTask.NEW, 6, LocalDateTime.of(2018, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task7 = new Task("task7", "descr7", StatusOfTask.NEW, 7, LocalDateTime.of(2017, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task8 = new Task("task8", "descr8", StatusOfTask.NEW, 8, LocalDateTime.of(2016, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task9 = new Task("task9", "descr9", StatusOfTask.NEW, 9, LocalDateTime.of(2015, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task10 = new Task("task10", "descr10", StatusOfTask.NEW, 10, LocalDateTime.of(2014, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Task task11 = new Task("task11", "descr11", StatusOfTask.NEW, 11, LocalDateTime.of(2013, 03, 04, 12, 00), Duration.ofMinutes(60));
+    Epic epic1 = new Epic("epic1", "descr1", StatusOfTask.NEW, 12, LocalDateTime.of(2023, 03, 04, 12, 00), Duration.ofMinutes(60), LocalDateTime.of(2023, 03, 04, 13, 00));
 
     void fillInArray() {
         historyManager.setHistory(task1);
@@ -59,7 +61,7 @@ class InMemoryHistoryManagerTest {
     @Test
     void changeTaskNumber10AndPutInHistoryManagerTest() {
         fillInArray();
-        Task task10upd = new Task("task10UPD", "descr10UPD", StatusOfTask.DONE, task10.getId());
+        Task task10upd = new Task("task10UPD", "descr10UPD", StatusOfTask.DONE, task10.getId(), LocalDateTime.of(2014, 03, 04, 12, 00), Duration.ofMinutes(60));
         historyManager.setHistory(task10upd);
 
         final List<Task> history = historyManager.getTasks();
@@ -81,8 +83,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void checkEpicEqualityInHistoryTest() {
-        Epic epic2 = new Epic("epic2", "descr1", StatusOfTask.NEW, 12);
-        Epic epic3sameEpic1 = new Epic("epic1", "descr1", StatusOfTask.NEW, 12);
+        Epic epic2 = new Epic("epic2", "descr1", StatusOfTask.NEW, 12, LocalDateTime.of(2023, 03, 04, 12, 00), Duration.ofMinutes(60), LocalDateTime.of(2023, 03, 04, 13, 00));
+        Epic epic3sameEpic1 = new Epic("epic1", "descr1", StatusOfTask.NEW, 12, LocalDateTime.of(2023, 03, 04, 12, 00), Duration.ofMinutes(60), LocalDateTime.of(2023, 03, 04, 13, 00));
         assertNotEquals(epic1, epic2);
         assertEquals(epic1, epic3sameEpic1);
     }
@@ -155,6 +157,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(history.get(task3.getId()), history.get(task1.getId()).next, "третий элемент не связался с next первого");
         assertNull(history.get(task3.getId()).next, "next третьего элемента не null");
     }
-
-
 }
