@@ -213,6 +213,7 @@ public class InMemoryTaskManager implements TaskManager {
 
         return priorityTasksList;
     }
+
     // Метод становится публичным и добавлен в интерфейс для проверки задач, приходящих через АПИ
     @Override
     public boolean isNoTaskIntersection(Task task) {
