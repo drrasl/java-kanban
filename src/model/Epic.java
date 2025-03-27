@@ -53,6 +53,8 @@ public class Epic extends Task {
         this.subTasks.clear();
     }
 
+    // updateEpicStatus также "под капотом" вызывает updateEpicTime(), так как их нужно запускать совместно.
+    // На будущее будет сделан отдельный метод для единовременного обновления Статуса и Времени Эпика.
     public void updateEpicStatus() {
         int newStatusCounter = 0;
         int doneStatusCounter = 0;

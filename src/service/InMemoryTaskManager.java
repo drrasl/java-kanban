@@ -195,6 +195,8 @@ public class InMemoryTaskManager implements TaskManager {
         this.id = id;
     }
 
+    // Метод добавлен в интерфейс для АПИ
+    @Override
     public Set<Task> getPrioritizedTasks() {
         Set<Task> priorityTasksList = new TreeSet<>(Comparator.comparing(Task::getStartTime).thenComparing(Task::getId)
         );
@@ -211,8 +213,9 @@ public class InMemoryTaskManager implements TaskManager {
 
         return priorityTasksList;
     }
-
-    protected boolean isNoTaskIntersection(Task task) {
+    // Метод становится публичным и добавлен в интерфейс для проверки задач, приходящих через АПИ
+    @Override
+    public boolean isNoTaskIntersection(Task task) {
         if (getPrioritizedTasks().isEmpty() | task.getStartTime() == null) {
             return true;
         } else {
