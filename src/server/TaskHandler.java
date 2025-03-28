@@ -73,7 +73,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                     if (task.getId() > 0) {
                         if (taskManager.isNoTaskIntersection(task)) {
                             taskManager.updateTask(task);
-                            sendSuccess(exchange, "Задача успешно добавлена");
+                            sendSuccess(exchange, "Задача успешно обновлена");
                         } else {
                             sendHasInteractions(exchange, "Новая задача пересекается с существующими задачами");
                         }
@@ -83,7 +83,7 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                             sendHasInteractions(exchange, "Новая задача пересекается с существующими задачами");
                             return;
                         }
-                        sendSuccess(exchange, "Задача успешно добавлена");
+                        sendSuccess(exchange, "Задача успешно добавлена. Id задачи: " + newId);
                     } else {
                         sendBadRequest(exchange, "Ошибка id задачи");
                     }

@@ -75,7 +75,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                         sendSuccess(exchange, "Эпик успешно обновлен");
                     } else if (epic.getId() == 0) {
                         int newId = taskManager.setEpic(epic);
-                        sendSuccess(exchange, "Эпик успешно добавлен");
+                        sendSuccess(exchange, "Эпик успешно добавлен. Id эпика: " + newId);
                     } else {
                         sendBadRequest(exchange, "Ошибка id эпика");
                     }

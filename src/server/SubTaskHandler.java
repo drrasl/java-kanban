@@ -73,7 +73,7 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
                     if (subTask.getId() > 0) {
                         if (taskManager.isNoTaskIntersection(subTask)) {
                             taskManager.updateSubTask(subTask);
-                            sendSuccess(exchange, "Подзадача успешно добавлена");
+                            sendSuccess(exchange, "Подзадача успешно обновлена");
                         } else {
                             sendHasInteractions(exchange, "Новая подзадача пересекается с существующими задачами");
                         }
@@ -84,7 +84,7 @@ public class SubTaskHandler extends BaseHttpHandler implements HttpHandler {
                                     "или id эпика не добавлен/не корректен");
                             return;
                         }
-                        sendSuccess(exchange, "Подзадача успешно добавлена");
+                        sendSuccess(exchange, "Подзадача успешно добавлена. Id подзадачи: " + newId);
                     } else {
                         sendBadRequest(exchange, "Ошибка id подзадачи");
                     }
