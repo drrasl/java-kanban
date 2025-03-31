@@ -18,6 +18,7 @@ import java.util.Map;
     Х-Т это таблица ключей по 15 минут и значений - занято или нет.
     -----
     Предполагаем, что класс будет инициализироваться на 1 год, то есть Х-М на 365 дней.
+    [____XXXX_____XXXX_____________XXXXXXXXXXXXXX____________XXXX________XXXXXXXXXXXXX]
 */
 
 public class TaskIntersections {

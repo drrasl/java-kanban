@@ -6,6 +6,7 @@ import model.Task;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface TaskManager {
     int setTask(Task task);
@@ -47,4 +48,8 @@ public interface TaskManager {
     List<SubTask> getSubTaskByEpic(int epicId);
 
     List<Task> getTasks();
+
+    boolean isNoTaskIntersection(Task task);
+
+    Set<Task> getPrioritizedTasks();
 }

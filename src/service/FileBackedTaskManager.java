@@ -45,9 +45,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-    //Поменял метод с private на protected - для возможности произвести тест на выкидываемую ошибку, иначе она не ловится
-    //Тест exceptionTest. Оставить ли метод protected или лучше private? Иначе я до ошибки не доберусь.
-    protected void save() throws ManagerSaveException {
+    //Поменял метод с private на default - для возможности произвести тест на выкидываемую ошибку, иначе она не ловится
+    //Тест exceptionTest
+    void save() throws ManagerSaveException {
         ArrayList<Task> tasks = getAllTasks();
         ArrayList<Epic> epics = getAllEpics();
         ArrayList<SubTask> subTasks = getAllSubTasks();
